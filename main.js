@@ -50,7 +50,7 @@ function readAndDrawChart(json, depth) {
   console.log("dataset is constructed in ", treeEnd - start, dataSet);
 
   const chart = anychart.treeMap(dataSet, "as-tree");
-  chart.title("Size of the JSON content");
+  chart.title("Contents of the JSON file");
   chart.sort("asc");
   chart.maxDepth(depth);
   chart.container("container");
