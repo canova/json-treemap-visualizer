@@ -1,4 +1,4 @@
-let json;
+let treemap;
 let depth;
 
 window.onload = function () {
@@ -11,8 +11,10 @@ window.onload = function () {
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      json = JSON.parse(e.target.result);
-      readAndDrawChart(json, depth);
+      const json = JSON.parse(e.target.result);
+      const startTime = performance.now();
+      treemap = generateTree(json, startTime);
+      drawChart(treemap, depth, startTime);
     };
     reader.readAsText(file);
   });
@@ -23,41 +25,33 @@ window.onload = function () {
       if (newVal === "") {
         return;
       }
+
       const numNewVal = Number(newVal);
-      if (numNewVal === NaN) {
+      if (Number.isNaN(numNewVal)) {
         return;
       }
+
       depth = numNewVal;
-      readAndDrawChart(json, depth);
+      const startTime = performance.now();
+      drawChart(treemap, depth, startTime);
     }
   });
 };
 
-function readAndDrawChart(json, depth) {
+function generateTree(json, startTime) {
   console.log("reading json");
-  // Clear the content of the container.
-  const container = document.querySelector("#container");
-  container.innerHTML = "";
 
-  const dataSet = [];
+  const treemap = [];
   const data = { name: "JSON", children: [] };
-  dataSet.push(data);
+  treemap.push(data);
+
   const children = data.children;
-
-  const start = performance.now();
   recursiveGenerateTree(children, json);
-  const treeEnd = performance.now();
-  console.log("dataset is constructed in ", treeEnd - start, dataSet);
 
-  const chart = anychart.treeMap(dataSet, "as-tree");
-  chart.title("Contents of the JSON file");
-  chart.sort("asc");
-  chart.maxDepth(depth);
-  chart.container("container");
-  chart.draw();
+  const treeEndTime = performance.now();
+  console.log("treemap is constructed in ", treeEndTime - startTime, treemap);
 
-  const end = performance.now();
-  console.log("total time taken", end - start);
+  return treemap;
 }
 
 function recursiveGenerateTree(children, json) {
@@ -87,6 +81,24 @@ function recursiveGenerateTree(children, json) {
     children.push(child);
     recursiveGenerateTree(child.children, value);
   }
+}
+
+function drawChart(treemap, depth, startTime) {
+  console.log("drawing the chart");
+
+  // Clear the content of the container.
+  const container = document.querySelector("#container");
+  container.innerHTML = "";
+
+  const chart = anychart.treeMap(treemap, "as-tree");
+  chart.title("Contents of the JSON file");
+  chart.sort("asc");
+  chart.maxDepth(depth);
+  chart.container("container");
+  chart.draw();
+
+  const endTime = performance.now();
+  console.log("total time taken", endTime - startTime);
 }
 
 function isPrimitive(test) {
