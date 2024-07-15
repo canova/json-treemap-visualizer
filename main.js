@@ -10,8 +10,8 @@ window.onload = function () {
     const file = event.target.files[0];
     const reader = new FileReader();
 
-    reader.onload = (event) => {
-      json = JSON.parse(event.target.result);
+    reader.onload = (e) => {
+      json = JSON.parse(e.target.result);
       readAndDrawChart(json, depth);
     };
     reader.readAsText(file);
