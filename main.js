@@ -40,6 +40,7 @@ window.onload = function () {
 
 function generateTree(json, startTime) {
   console.log("reading json");
+  clearContainer();
 
   const treemap = [];
   const data = { name: "JSON", children: [] };
@@ -85,10 +86,7 @@ function recursiveGenerateTree(children, json) {
 
 function drawChart(treemap, depth, startTime) {
   console.log("drawing the chart");
-
-  // Clear the content of the container.
-  const container = document.querySelector("#container");
-  container.innerHTML = "";
+  clearContainer();
 
   const chart = anychart.treeMap(treemap, "as-tree");
   chart.title("Contents of the JSON file");
@@ -99,6 +97,12 @@ function drawChart(treemap, depth, startTime) {
 
   const endTime = performance.now();
   console.log("total time taken", endTime - startTime);
+}
+
+function clearContainer() {
+  // Clear the content of the container.
+  const container = document.querySelector("#container");
+  container.innerHTML = "";
 }
 
 function isPrimitive(test) {
